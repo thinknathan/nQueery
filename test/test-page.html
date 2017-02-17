@@ -1,0 +1,381 @@
+<!doctype html>
+<html class="no-js" lang="en-CA">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>nQueery Experiment</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="style.css" rel="stylesheet">
+  <script src="../src/nqueery-core.js"></script>
+  <script src="../src/nqueery-plugins.js"></script>
+
+</head>
+
+<body>
+
+  <section class="main container" id="main" role="main">
+
+    <h1>nQueery</h1>
+
+    <div class="row">
+      <div class="twin">
+        <h2>Class Manipulation</h2>
+        <div class="row">
+          <div class="target thirds animated clsTarget" id="clsTarget">Manipulate my classes</div>
+          <div class="target thirds animated clsTarget">Manipulate my classes</div>
+          <div class="target thirds animated clsTarget">Manipulate my classes</div>
+        </div>
+        <a class="button" href="#clsTarget" id="hasRed">Do I have .red?</a>
+        <a class="button" href="#clsTarget" id="addRed">Add .red</a>
+        <a class="button" href="#clsTarget" id="remRed">Remove .red</a>
+        <a class="button" href="#clsTarget" id="togRed">Toggle .red</a>
+      </div>
+
+      <div class="twin">
+        <h2>Scroll, Throttle &amp; Debounce</h2>
+        <div class="target animated" id="scrollTarget">Scroll the window to activate.
+          <br><small>Throttled events fire less frequently to reduce CPU usage.<br>Debounced events only fire once after a delay, even if called multiple times.</small>
+          <br>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <h2 id="scrollToTarget">Match Height</h2>
+      <div class="twin">
+        <div class="target tall" id="matchTargetTall">I'm tall</div>
+
+      </div>
+      <div class="twin">
+        <div class="row">
+          <div class="target thirds animated matchTarget animated" id="matchTarget">I will be tall when I grow up</div>
+          <div class="target thirds animated matchTarget animated">I will be tall when I grow up</div>
+          <div class="target thirds animated matchTarget animated">I will be tall when I grow up</div>
+        </div>
+        <a class="button" href="#matchTarget" id="matchButton">Match Height</a>
+        <a class="button" href="#matchTarget" id="matchButtonReset">Reset</a>
+      </div>
+
+    </div>
+    <div class="row">
+
+      <div class="twin">
+        <h2>Event Control</h2>
+        <div class="target animated" id="attachTarget"> Target me </div>
+        <a class="button disabled" id="attachButton">I only do things when told</a>
+        <a class="button" href="#attachTarget" id="attachButtonAdd">Add click event to first button</a>
+        <a class="button" href="#attachTarget" id="attachButtonRemove">Remove click event from first button</a>
+
+        <a class="button" href="#attachTarget" id="attachButtonOne">I only react once</a>
+
+      </div>
+      <div class="twin">
+        <h2>Style Manipulation</h2>
+        <div class="row">
+          <div class="target thirds animated styleTarget" id="styleTarget">Manipulate my styles directly</div>
+          <div class="target thirds animated styleTarget">Manipulate my styles directly</div>
+          <div class="target thirds animated styleTarget">Manipulate my styles directly</div>
+        </div>
+        <a class="button" href="#styleTarget" id="styleButtonBackground">background: red</a>
+        <a class="button" href="#styleTarget" id="styleButtonPadding">padding: 7%</a>
+        <a class="button" href="#styleTarget" id="styleButtonBorder">border: 0</a>
+        <a class="button" href="#styleTarget" id="styleButtonReset">Reset</a>
+      </div>
+    </div>
+
+
+
+    <div class="row">
+
+      <div class="twin">
+        <h2>Query Strings</h2>
+        <div class="target animated queryTarget" id="queryTarget"> [Empty] </div>
+        <a class="button" href="#queryTarget" id="addQueryButton">-</a>
+
+      </div>
+      <div class="twin">
+        <h2>Hashes</h2>
+        <div class="row">
+          <div class="target animated hashTarget" id="hashTarget">[Empty]</div>
+        </div>
+        <a class="button" href="#hashTarget" id="hasWindowHashButton">Is there a location hash?</a>
+        <a class="button" href="#hashTarget" id="addWindowHashButton">Add hash to location</a>
+        <a class="button" href="#hashTarget" id="addHashButton">Add document hash to box</a>
+        <a class="button" href="#hashTarget" id="linkHashButton">Check hash of link</a>
+        <a class="button" href="#hashTarget" id="hasHashButton">This link has hash? (Yes)</a>
+        <a class="button" id="noHashButton">This link has hash? (No)</a>
+      </div>
+    </div>
+
+
+    <div class="row">
+
+      <div class="twin">
+        <h2>Cookies</h2>
+        <div class="target animated cookiesTarget" id="cookiesTarget"> [Empty] </div>
+        <a class="button" href="#cookiesTarget" id="setCookieButton">-</a>
+
+      </div>
+      <div class="twin">
+        <h2>AJAX</h2>
+        <div class="row">
+          <div class="target animated ajaxTarget" id="ajaxTarget">[Empty]</div>
+        </div>
+        <a class="button" href="#ajaxTarget" id="getAjaxButton">-</a>
+      </div>
+    </div>
+
+  </section>
+  <!-- end #main -->
+
+  <aside class="modal hide opacity-hide animated" id="yes">
+    <p><span>Yes</span></p>
+  </aside>
+  <aside class="modal hide opacity-hide animated" id="no">
+    <p><span>No</span></p>
+  </aside>
+
+  <script>
+    (function ($, window, document) {
+
+      var isMobile = $.isMobile;
+
+      if (isMobile) {
+        console.log('You\'re using a mobile device');
+      } else {
+        console.log('Looks too big to be mobile');
+      }
+
+      // **************************************
+      // Scrolling
+
+      var scrTarget = $('#scrollTarget');
+
+      function scrollDeactivate() {
+        scrTarget.removeClass('activated');
+        scrTarget[0].innerHTML += ' -';
+      }
+
+      function scrollActivate() {
+        scrTarget.addClass('activated').debounce(scrollDeactivate, 1250);
+        scrTarget[0].innerHTML += ' .';
+      }
+
+      var scrollThrottle = $().throttle(scrollActivate, 250);
+
+      $(window).attachEvent('scroll', scrollThrottle);
+
+
+      // **************************************
+      // Class Manipulation
+
+      $('#hasRed').attachEvent('click', function (e) {
+        e.preventDefault();
+        if ($('#clsTarget').hasClass('red')) {
+          var target = $('#yes');
+
+          target.removeClass('hide').removeClass('opacity-hide').delay(function () {
+            target.addClass('opacity-hide').delay(function () {
+              target.addClass('hide');
+            }, 400);
+          }, 1500);
+
+        } else {
+          var target = $('#no');
+
+          target.removeClass('hide').removeClass('opacity-hide').delay(function () {
+            target.addClass('opacity-hide').delay(function () {
+              target.addClass('hide');
+            }, 400);
+          }, 1500);
+        }
+      });
+
+      $('#addRed').attachEvent('click', function (e) {
+        e.preventDefault();
+        $('.clsTarget').addClass('red');
+      });
+
+      $('#remRed').attachEvent('click', function (e) {
+        e.preventDefault();
+        $('.clsTarget').removeClass('red');
+      });
+
+      $('#togRed').attachEvent('click', function (e) {
+        e.preventDefault();
+        $('.clsTarget').toggleClass('red');
+      });
+
+      // **************************************
+      // Event manipulation
+
+      // attachEvent, removeEvent
+
+      function attachMe(e) {
+        e.preventDefault();
+        var rand = $().rand(1, 3);
+        if (rand == 1) $('#attachTarget').removeClass('yellow').removeClass('purple').addClass('red');
+        if (rand == 2) $('#attachTarget').removeClass('purple').removeClass('red').addClass('yellow');
+        if (rand == 3) $('#attachTarget').removeClass('yellow').removeClass('red').addClass('purple');
+      }
+
+      function attachAdd(e) {
+        e.preventDefault();
+        $('#attachButton').attachEvent('click', attachMe).removeClass('disabled');
+      }
+
+      function attachRemove(e) {
+        e.preventDefault();
+        $('#attachButton').removeEvent('click', attachMe).addClass('disabled');
+      }
+
+      /*
+      function attachOne(e) {
+      //e.preventDefault();
+      $('#attachButtonOne').addClass('disabled');
+      console.log('One-time event firing.');
+      }
+      */
+
+      $('#attachButtonAdd').attachEvent('click', attachAdd);
+      $('#attachButtonRemove').attachEvent('click', attachRemove);
+      $('#attachButtonOne').one('click', function (e) {
+        if (e) e.preventDefault();
+        $('#attachButtonOne').addClass('disabled');
+        console.log('One-time event firing.');
+      });
+
+
+      // **************************************
+      // Match Height
+
+      $('#matchButton').attachEvent('click', function (e) {
+        e.preventDefault();
+        $('.matchTarget').matchHeight('#matchTargetTall');
+      });
+      $('#matchButtonReset').attachEvent('click', function (e) {
+        e.preventDefault();
+        $('.matchTarget').style('height', '');
+        //console.log('resetMatch');
+      });
+
+
+      // **************************************
+      // Styles
+
+      $('html').removeClass('no-js').addClass('js');
+
+      $('#styleButtonBackground').attachEvent('click', function (e) {
+        e.preventDefault();
+        $('.styleTarget').style('background', 'red');
+      });
+      $('#styleButtonPadding').attachEvent('click', function (e) {
+        e.preventDefault();
+        $('.styleTarget').style('padding', '7%');
+      });
+      $('#styleButtonBorder').attachEvent('click', function (e) {
+        e.preventDefault();
+        $('.styleTarget').style('border', '0');
+      });
+      $('#styleButtonReset').attachEvent('click', function (e) {
+        e.preventDefault();
+        $('.styleTarget').style('background', '').style('padding', '').style('border', '');
+      });
+
+      // **************************************
+      // Query Strings
+
+      // is there a query string in current url?
+
+      // get query strings from window url
+
+      // get query strings from arbitrary text
+
+      // **************************************
+      // Hash
+
+      // Is there a location hash?
+      $('#hasWindowHashButton').attachEvent('click', function (e) {
+        e.preventDefault();
+        if ($(document).hash()) {
+          $('#hashTarget')[0].innerHTML = 'Yes';
+        } else {
+          $('#hashTarget')[0].innerHTML = 'No';
+        }
+        return false;
+      });
+
+      // Add hash to location
+      $('#addWindowHashButton').attachEvent('click', function (e) {
+        e.preventDefault();
+        $(document).hash('NewHash');
+        return false;
+      });
+
+      // Add document hash to box
+      $('#addHashButton').attachEvent('click', function (e) {
+        e.preventDefault();
+        var docHash = $(document).hash();
+        if (docHash) {
+          $('#hashTarget')[0].innerHTML = docHash;
+        }
+        return false;
+      });
+
+      // <a class="button" href="#hashTarget" id="linkHashButton">Check hash of link</a>
+      $('#linkHashButton').attachEvent('click', function (e) {
+        e.preventDefault();
+        var docHash = $('#linkHashButton').hash();
+        if (docHash) {
+          $('#hashTarget')[0].innerHTML = docHash;
+        }
+        return false;
+      });
+
+      // <a class="button" href="#hashTarget" id="hasHashButton">Has hash? (Yes)</a>
+      $('#hasHashButton').attachEvent('click', function (e) {
+        e.preventDefault();
+        if ($('#hasHashButton').hash()) {
+          $('#hashTarget')[0].innerHTML = 'Yes';
+        } else {
+          $('#hashTarget')[0].innerHTML = 'No';
+        }
+        return false;
+      });
+
+      // <a class="button" id="noHashButton">Has hash? (No)</a>
+      $('#noHashButton').attachEvent('click', function (e) {
+        e.preventDefault();
+        if ($('#noHashButton').hash()) {
+          $('#hashTarget')[0].innerHTML = 'Yes';
+        } else {
+          $('#hashTarget')[0].innerHTML = 'No';
+        }
+        return false;
+      });
+
+      // **************************************
+      // Cookies
+
+      // does cookie exist?
+
+      // set & put value into cookie
+
+      // retrieve value from cookie
+
+      // **************************************
+      // Ajax
+
+      // submit form (put)
+
+      // grab content (get)
+
+    })(nQueery, window, document);
+  </script>
+
+</body>
+
+</html>
